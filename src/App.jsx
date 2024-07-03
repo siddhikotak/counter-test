@@ -1,35 +1,37 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Fragment, useRef, useState } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const interval = useRef();
+
+  const handleClick = () => {
+    if (started) {
+      clearInterval(interval.current);
+      setStarted(false);
+    } else {
+      setStarted(true);
+      interval.current = setInterval(() => {
+        setCount((count) => count + 1);
+      }, 1000);
+    }
+  };
+
+  const handleReset = () => {
+    setCount(0);
+    clearInterval(interval.current);
+    interval.current = 0;
+    setStarted(false);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Fragment>
+      <p>{count}</p>
+      <button onClick={handleClick}>{started ? "pause" : "start"}</button>
+      <button onClick={handleReset}>reset</button>
+    </Fragment>
+  );
 }
 
-export default App
+export default App;
